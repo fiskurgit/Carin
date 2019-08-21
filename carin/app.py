@@ -24,6 +24,7 @@ def run():
         REGIONAL = auto()
 
     endpoint = Endpoint.UNKNOWN
+    postcode = None
 
     argument_count = len(sys.argv)
     if argument_count == 1:
@@ -32,7 +33,7 @@ def run():
         log("Parse Arguments")
         log(sys.argv)
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "e:", ["endpoint="])
+            opts, args = getopt.getopt(sys.argv[1:], "e:p:", ["endpoint=", "postcode="])
         except getopt.GetoptError:
             show_bad_argument_help()
             sys.exit(2)
@@ -45,13 +46,15 @@ def run():
                     endpoint = Endpoint.INTENSITY
                 elif arg == "regional":
                     endpoint = Endpoint.REGIONAL
+            if opt == '-p':
+                postcode = arg
 
         if endpoint == Endpoint.GENERATION:
             generation()
         elif endpoint == Endpoint.INTENSITY:
             intensity()
         elif endpoint == Endpoint.REGIONAL:
-            regional()
+            regional(postcode=postcode)
         elif endpoint == Endpoint.UNKNOWN:
             show_bad_argument_help()
 
@@ -70,9 +73,14 @@ def intensity():
     print(json.dumps(intensity_json, indent=2, sort_keys=True))
 
 
-def regional():
+def regional(**kwargs):
     log("Endpoint: regional")
-    request = urllib.request.urlopen("https://api.carbonintensity.org.uk/regional")
+    postcode = kwargs.get('postcode', None)
+    if postcode is None:
+        request = urllib.request.urlopen("https://api.carbonintensity.org.uk/regional")
+    else:
+        request = urllib.request.urlopen("https://api.carbonintensity.org.uk/regional/postcode/" + postcode)
+
     regional_json = json.loads(request.read())
     print(json.dumps(regional_json, indent=2, sort_keys=True))
 
