@@ -7,6 +7,7 @@ import urllib.request
 import json
 
 debug = False
+base_url = "https://api.carbonintensity.org.uk"
 
 
 def log(message):
@@ -61,14 +62,14 @@ def run():
 
 def generation():
     log("Endpoint: generation")
-    request = urllib.request.urlopen("https://api.carbonintensity.org.uk/generation")
+    request = urllib.request.urlopen(base_url + "/generation")
     generation_json = json.loads(request.read())
     print(json.dumps(generation_json, indent=2, sort_keys=True))
 
 
 def intensity():
     log("Endpoint: intensity")
-    request = urllib.request.urlopen("https://api.carbonintensity.org.uk/intensity")
+    request = urllib.request.urlopen(base_url + "/intensity")
     intensity_json = json.loads(request.read())
     print(json.dumps(intensity_json, indent=2, sort_keys=True))
 
@@ -77,9 +78,9 @@ def regional(**kwargs):
     log("Endpoint: regional")
     postcode = kwargs.get('postcode', None)
     if postcode is None:
-        request = urllib.request.urlopen("https://api.carbonintensity.org.uk/regional")
+        request = urllib.request.urlopen(base_url + "/regional")
     else:
-        request = urllib.request.urlopen("https://api.carbonintensity.org.uk/regional/postcode/" + postcode)
+        request = urllib.request.urlopen(base_url + "/regional/postcode/" + postcode)
 
     regional_json = json.loads(request.read())
     print(json.dumps(regional_json, indent=2, sort_keys=True))
